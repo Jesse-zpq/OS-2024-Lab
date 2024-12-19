@@ -127,6 +127,8 @@ found:
   p->context.ra = (uint64)forkret;
   p->context.sp = p->kstack + PGSIZE;
 
+  p->syscall_trace = 0; //myTODO: syscall_trace初始值0
+
   return p;
 }
 
@@ -290,6 +292,8 @@ fork(void)
   np->cwd = idup(p->cwd);
 
   safestrcpy(np->name, p->name, sizeof(p->name));
+
+  np->syscall_trace = p->syscall_trace;//myTODO1 继承父进程的 syscall_trace
 
   pid = np->pid;
 
@@ -693,3 +697,16 @@ procdump(void)
     printf("\n");
   }
 }
+//begin myTODO
+uint64
+count_process(void) { //counting used process slots 
+  uint64 cnt = 0;
+  for(struct proc *p = proc; p < &proc[NPROC]; p++) {
+
+    if(p->state != UNUSED) { // 不是 UNUSED 的进程位，就是已经分配的
+        cnt++;
+    }
+  }
+  return cnt;
+}
+//end myTODO
