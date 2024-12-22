@@ -5,6 +5,7 @@
 #define ROOTINO  1   // root i-number
 #define BSIZE 1024  // block size
 
+
 // Disk layout:
 // [ boot block | super block | log | inode blocks |
 //                                          free bit map | data blocks]
@@ -23,10 +24,13 @@ struct superblock {
 };
 
 #define FSMAGIC 0x10203040
-
-#define NDIRECT 12
+//myTODO1:添加宏定义。我们将分出一些更高等级的索引页，因此要调整这些值
+#define NDIRECT 11 
 #define NINDIRECT (BSIZE / sizeof(uint))
-#define MAXFILE (NDIRECT + NINDIRECT)
+#define MAXFILE (NDIRECT + NINDIRECT + NINDIRECT * NINDIRECT)
+// #define NDIRECT 12
+// #define NINDIRECT (BSIZE / sizeof(uint))
+// #define MAXFILE (NDIRECT + NINDIRECT)
 
 // On-disk inode structure
 struct dinode {
@@ -35,7 +39,7 @@ struct dinode {
   short minor;          // Minor device number (T_DEVICE only)
   short nlink;          // Number of links to inode in file system
   uint size;            // Size of file (bytes)
-  uint addrs[NDIRECT+1];   // Data block addresses
+  uint addrs[NDIRECT+2];   // myTODO：+1变+2 Data block addresses
 };
 
 // Inodes per block.
